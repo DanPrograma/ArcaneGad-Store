@@ -1,0 +1,83 @@
+/* src/styles/arcane.css */
+:root{
+  --arc-primary:#c200fd;
+  --arc-secondary:#5f2c82;
+  --arc-text:#e0c3fc;
+  --arc-bg-1:#2d0036; --arc-bg-2:#3a1c71; --arc-bg-3:#5f2c82; --arc-bg-4:#0f2027;
+
+  /* map a Bootstrap vars */
+  --bs-primary: var(--arc-primary);
+  --bs-body-color: var(--arc-text);
+}
+
+html,body,#root{
+  min-height:100%;
+  background: linear-gradient(135deg, var(--arc-bg-1) 0%, var(--arc-bg-2) 40%, var(--arc-bg-3) 70%, var(--arc-bg-4) 100%);
+  color: var(--arc-text);
+}
+
+.navbar.arcane-navbar,
+.navbar.arcane-navbar .navbar-brand,
+.navbar.arcane-navbar .nav-link{
+  color: var(--arc-text) !important;
+  background: transparent !important;
+}
+.navbar.arcane-navbar{
+  border-bottom:1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(8px);
+}
+.arcane-navbar .form-control{
+  background: rgba(44,0,60,.5);
+  border:1px solid var(--arc-secondary);
+  color: var(--arc-text);
+}
+.arcane-navbar .form-control::placeholder{ color: var(--arc-text); opacity:1; }
+.arcane-navbar .btn-outline-success{
+  border-color: var(--arc-primary); color: var(--arc-primary);
+}
+.arcane-navbar .btn-outline-success:hover{
+  background: var(--arc-primary); color:#fff;
+}
+
+.banner-header{
+  height: 300px;
+  background: no-repeat center/cover;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size: clamp(20px,3vw,32px); font-weight:700;
+  text-shadow: 1px 1px 5px #000;
+  border: 2px solid var(--arc-primary);
+  border-radius:16px;
+  box-shadow: 0 0 16px 2px #c200fd88, 0 2px 10px rgba(194,0,253,0.2);
+}
+
+.card.arcane{
+  background: rgba(44,0,60,.7);
+  color: var(--arc-text);
+  border-radius:12px;
+  box-shadow: 0 4px 16px rgba(194,0,253,.08);
+  overflow:hidden;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.card.arcane:hover{ transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+.card.arcane .card-img-top{ object-fit: cover; height:300px; }
+
+.category-pill{
+  display:inline-flex; align-items:center; gap:.5rem;
+  padding:.5rem 1rem; border:1px solid rgba(255,255,255,.12);
+  border-radius:999px; background: rgba(255,255,255,.03);
+}
+::placeholder{ color:#fff; opacity:1; } input,textarea{ color:#fff; }
+
+/* Barra de filtros */
+.filter-bar{
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+.filter-bar .form-label{ margin-right:8px; white-space:nowrap; }
+.filter-bar .btn{ width:auto; }                /* evita que el botón tome todo el ancho */
+@media (min-width:768px){
+  .filter-bar .row > *{ display:flex; align-items:center; }
+}

@@ -1,0 +1,276 @@
+/* Fondo general del body con gradiente y color de texto */
+body {
+ background: linear-gradient(135deg, #2d0036 0%, #3a1c71 40%, #5f2c82 70%, #0f2027 100%);
+ color: #e0c3fc;
+ min-height: 100vh;
+}
+
+/* Sombra para el título principal */
+h1 {
+ text-shadow: 0 0 10px #c200fd, 0 0 20px #5f2c82;
+}
+
+/* Estilos transparentes y color para navbar y elementos relacionados */
+.navbar, .navbar-nav, .navbar-brand, .form-control, .btn {
+ background: transparent !important;
+ color: #e0c3fc !important;
+}
+
+/* Estilo para los campos de formulario */
+.form-control {
+ background: rgba(44, 0, 60, 0.5);
+ border: 1px solid #5f2c82;
+ color: #ffffff;
+}
+
+
+/* Botón outline con color personalizado */
+.btn-outline-success {
+ border-color: #c200fd;
+ color: #c200fd;
+}
+
+/* Hover del botón outline */
+.btn-outline-success:hover {
+ background: #c200fd;
+ color: #fff;
+}
+
+/* Título principal centrado y con sombra */
+.titulo-principal {
+  text-align: center;
+  margin-top: 20px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #e0c3fc;
+  text-shadow: 0 0 10px #c200fd, 0 0 20px #5f2c82;
+}
+
+/* Estilo para las cards de novedades */
+.card {
+  box-shadow: 0 4px 16px rgba(194,0,253,0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(44, 0, 60, 0.7);
+  color: #e0c3fc;
+}
+
+/* Imagen superior de las cards, ajusta tamaño y recorte */
+.card-img-top {
+  object-fit: cover;
+  height: 300px;
+}
+
+/* Sección de novedades para hombre, centrado y márgenes */
+#hombre-section {
+  color: #e0c3fc;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Carrito alineado a la derecha y centrado verticalmente */
+#carrito {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 20px;
+}
+
+/* Navbar personalizada con gradiente, borde y sombra */
+.arcane-navbar {
+  background: linear-gradient(90deg, #2d0036 0%, #3a1c71 60%, #5f2c82 100%) !important;
+  border-radius: 16px;
+  border: 2px solid #c200fd; /* Borde luminoso */
+  box-shadow: 0 0 16px 2px #c200fd88, 0 2px 10px rgba(194,0,253,0.2); /* Sombra y resplandor */
+}
+
+/* Colores para elementos internos de la navbar personalizada */
+.arcane-navbar .navbar-brand,
+.arcane-navbar .nav-link,
+.arcane-navbar .form-control,
+.arcane-navbar .btn {
+  color: #e0c3fc !important;
+}
+
+/* Fondo y borde para campos de formulario en la navbar personalizada */
+.arcane-navbar .form-control {
+  background: rgba(44, 0, 60, 0.5);
+  border: 1px solid #5f2c82;
+  color: #e0c3fc;
+}
+
+/* Color de placeholder en campos de formulario de la navbar */
+.arcane-navbar .form-control::placeholder {
+  color: #e0c3fc !important;
+  opacity: 1;
+}
+
+/* Botón outline en la navbar personalizada */
+.arcane-navbar .btn-outline-success {
+  border-color: #c200fd;
+  color: #c200fd;
+}
+
+/* Hover del botón outline en la navbar personalizada */
+.arcane-navbar .btn-outline-success:hover {
+  background: #c200fd;
+  color: #fff;
+}
+
+/* Fondo transparente para el contenedor de la navbar personalizada */
+.arcane-navbar .container-fluid {
+  background: transparent !important;
+}
+
+/* Estilo general para enlaces */
+a {
+  color: #e0c3fc;
+  text-decoration: none;
+}
+
+/* Subrayado al pasar el mouse sobre enlaces */
+a:hover {
+  text-decoration: underline;
+}
+
+/* Fuerza el color y fondo de las tarjetas en la sección hombre */
+#hombre-section .card,
+.row .card {
+  background: rgba(44, 0, 60, 0.7) !important;
+  color: #e0c3fc !important;
+}
+
+/* Estilo arcano y bordes neón para el acordeón */
+.arcane-accordion .accordion-item {
+  background: linear-gradient(135deg, #2d0036 0%, #5f2c82 100%);
+  border: 2px solid #c200fd;
+  box-shadow: 0 0 12px 2px #c200fd88, 0 2px 10px rgba(194,0,253,0.2);
+  border-radius: 12px;
+  color: #e0c3fc;
+}
+
+.arcane-accordion .accordion-button {
+  background: rgba(44, 0, 60, 0.7);
+  color: #e0c3fc;
+  border: none;
+  box-shadow: 0 0 8px #c200fd;
+}
+
+.arcane-accordion .accordion-button:not(.collapsed) {
+  background: #c200fd;
+  color: #fff;
+  box-shadow: 0 0 16px #c200fd;
+}
+
+.arcane-accordion .accordion-body {
+  background: rgba(44, 0, 60, 0.5);
+  color: #e0c3fc;
+  border-radius: 0 0 12px 12px;
+}
+
+
+nav, .arcane-navbar {
+  background: #222 !important;
+  color: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 15px 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+nav a, .arcane-navbar a {
+  color: white !important;
+  text-decoration: none;
+  font-weight: bold;
+}
+header, .banner-header {
+  background: url('assets/img/1000051379.jpg') no-repeat center/cover;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2em;
+  font-weight: bold;
+  text-shadow: 1px 1px 5px black;
+}
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+.producto, #ofertasDiv div {
+  background: white;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  display: inline-block;
+  width: 200px;
+  vertical-align: top;
+}
+.producto img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+button, .btn-custom {
+  background: #ff6f61;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+button:hover, .btn-custom:hover {
+  background: #ff4a3a;
+}
+#carrito, #testimonio, form, footer {
+  margin-top: 30px;
+}
+footer {
+  background: #222;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+input, select, textarea {
+  padding: 8px;
+  margin: 5px 0;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  color: white; /* Cambia el color del texto ingresado a blanco */
+}
+/* Cards de novedades */
+.novedad-card .card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+.novedad-card {
+  min-width: 220px;
+  max-width: 250px;
+  margin: 10px auto;
+}
+/* Responsive para productos */
+@media (max-width: 600px) {
+  .producto, #ofertasDiv div {
+    width: 100%;
+  }
+  .novedad-card {
+    max-width: 100%;
+  }
+}
+/* Cambia el color del texto del placeholder a blanco */
+/* Asegura que el texto sea completamente visible */
+::placeholder {
+  color: white; 
+  opacity: 1; 
+}
+/* Cambia el color del texto ingresado a blanco */
+input, textarea {
+  color: white; 
+}
