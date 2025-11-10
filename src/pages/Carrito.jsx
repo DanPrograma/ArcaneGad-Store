@@ -1,14 +1,12 @@
 // src/pages/Carrito.jsx
-// Carrito con estilos translúcidos y botones +/− visibles.
+// Carrito con panel translúcido + controles de cantidad. Botón Pagar → /checkout.
 import React from 'react';
 import { Container, Table, Button, ButtonGroup, Badge } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import '../styles/cart.css'; // ⬅️ estilos específicos del carrito
+import '../styles/cart.css'; // estilos del carrito (translúcido, contraste)
 
 export default function Carrito({ items = [], onIncrement, onDecrement, onRemove, onClear }) {
   const navigate = useNavigate();
-
-  // Helpers
   const fmt = (n) => `$${(n || 0).toLocaleString('es-CL')}`;
   const total = items.reduce((acc, it) => acc + (it.precio || 0) * (it.qty || 1), 0);
 
@@ -25,7 +23,6 @@ export default function Carrito({ items = [], onIncrement, onDecrement, onRemove
     );
   }
 
-  // Con contenido
   return (
     <Container className="py-4">
       <h2 className="page-title">Carrito</h2>
@@ -57,34 +54,14 @@ export default function Carrito({ items = [], onIncrement, onDecrement, onRemove
                 <td>{fmt(it.precio)}</td>
                 <td>
                   <ButtonGroup size="sm" aria-label="cantidad">
-                    <Button
-                      variant="outline-light"
-                      className="btn-qty"
-                      onClick={() => onDecrement && onDecrement(idx)}
-                    >
-                      −
-                    </Button>
-                    <Button
-                      variant="outline-light"
-                      className="btn-qty-display"
-                      disabled
-                    >
-                      {it.qty || 1}
-                    </Button>
-                    <Button
-                      variant="outline-light"
-                      className="btn-qty"
-                      onClick={() => onIncrement && onIncrement(idx)}
-                    >
-                      +
-                    </Button>
+                    <Button variant="outline-light" className="btn-qty" onClick={() => onDecrement?.(idx)}>−</Button>
+                    <Button variant="outline-light" className="btn-qty-display" disabled>{it.qty || 1}</Button>
+                    <Button variant="outline-light" className="btn-qty" onClick={() => onIncrement?.(idx)}>+</Button>
                   </ButtonGroup>
                 </td>
                 <td>{fmt((it.precio || 0) * (it.qty || 1))}</td>
                 <td>
-                  <Button size="sm" variant="outline-danger" onClick={() => onRemove && onRemove(idx)}>
-                    Eliminar
-                  </Button>
+                  <Button size="sm" variant="outline-danger" onClick={() => onRemove?.(idx)}>Eliminar</Button>
                 </td>
               </tr>
             ))}
@@ -99,8 +76,9 @@ export default function Carrito({ items = [], onIncrement, onDecrement, onRemove
 
       <div className="d-flex gap-2">
         <Button variant="outline-secondary" onClick={() => navigate('/productos')}>Seguir comprando</Button>
-        <Button variant="outline-danger" onClick={() => onClear && onClear()}>Vaciar carrito</Button>
-        <Button className="ms-auto" variant="success">Pagar</Button>
+        <Button variant="outline-danger" onClick={() => onClear?.()}>Vaciar carrito</Button>
+        {/* Ir al checkout */}
+        <Button className="ms-auto" variant="success" onClick={() => navigate('/checkout')}>Pagar</Button>
       </div>
     </Container>
   );
