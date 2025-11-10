@@ -1,4 +1,5 @@
 // src/pages/Productos.jsx
+// Listado con filtros por precio y tipo. Cada card abre el detalle ("Ver más").
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -7,15 +8,15 @@ import { ropa } from '../data/ropa';
 export default function Productos() {
   const navigate = useNavigate();
 
-  // Filtros
+  // Filtros controlados
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(5_000_000);
   const [selectedTipo, setSelectedTipo] = useState('todos');
 
-  // Lista mostrada
+  // Estado de la lista visible
   const [filteredProducts, setFilteredProducts] = useState(ropa);
 
-  // Aplicar filtros (precio + tipo)
+  // Ejecuta el filtrado (precio + tipo)
   const handleFilterClick = () => {
     const minOk = Number.isFinite(minPrice) ? minPrice : 0;
     const maxOk = Number.isFinite(maxPrice) ? maxPrice : Infinity;
@@ -27,14 +28,14 @@ export default function Productos() {
     setFilteredProducts(newFiltered);
   };
 
-  function goDetalle(id) {
-    navigate(`/productos/${id}`);
-  }
+  // Navegar al detalle
+  const goDetalle = (id) => navigate(`/productos/${id}`);
 
   return (
     <Container>
       <h2 className="page-title">Ropa</h2>
 
+      {/* Barra de filtros simple usando Bootstrap grid */}
       <Form
         onSubmit={(e) => { e.preventDefault(); handleFilterClick(); }}
         className="mb-3 p-3"
@@ -83,6 +84,7 @@ export default function Productos() {
         </Row>
       </Form>
 
+      {/* Cards de productos */}
       <Row>
         {filteredProducts.map((p) => (
           <Col md={4} key={p.id} className="mb-3">

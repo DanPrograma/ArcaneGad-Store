@@ -10,7 +10,10 @@ export default function ProductoDetalle({ onAdd }) {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const prod = ropa.find(p => p.id === id);
+  // normalizamos por si viene codificado o con tipos distintos
+  const safeId = decodeURIComponent(String(id));
+  const prod = ropa.find(p => String(p.id) === safeId);
+
   const [talla, setTalla] = React.useState('');
   const tallas = ['S', 'M', 'L', 'XL', 'XXL'];
 
@@ -25,17 +28,15 @@ export default function ProductoDetalle({ onAdd }) {
     );
   }
 
-  function handleAdd() {
-    if (!talla) return; // botón deshabilitado ya lo previene
+  const handleAdd = () => {
+    if (!talla) return;
     if (!user) {
-      // si no hay sesión, envia a registro y luego vuelve al carrito
       navigate('/register', { replace: true, state: { from: '/carrito' } });
       return;
     }
-    // usar el onAdd del App (persistencia en tg_cart ya está ahí)
     onAdd?.({ ...prod, talla, qty: 1 });
     navigate('/carrito');
-  }
+  };
 
   return (
     <Container className="py-4">
@@ -45,14 +46,12 @@ export default function ProductoDetalle({ onAdd }) {
             <Card.Img src={prod.img} alt={prod.nombre} />
           </Card>
         </Col>
-
         <Col md={6}>
           <h2 className="mb-1">{prod.nombre}</h2>
           {prod.oferta && <Badge bg="secondary" className="mb-2">Oferta</Badge>}
           <p className="mb-2" style={{ opacity: .9 }}>{prod.descripcion}</p>
           <p className="fw-bold fs-5 mb-3">${prod.precio.toLocaleString('es-CL')}</p>
 
-          {/* Tallas */}
           <div className="mb-3">
             <div className="mb-2 fw-semibold">Talla</div>
             <div className="d-flex flex-wrap gap-2">
@@ -67,9 +66,7 @@ export default function ProductoDetalle({ onAdd }) {
                 </Button>
               ))}
             </div>
-            {!talla && <div className="mt-2 text-warning" style={{ opacity: .8 }}>
-              Selecciona una talla para continuar.
-            </div>}
+            {!talla && <div className="mt-2 text-warning" style={{ opacity: .8 }}>Selecciona una talla para continuar.</div>}
           </div>
 
           <div className="d-flex gap-2">
@@ -83,3 +80,4 @@ export default function ProductoDetalle({ onAdd }) {
     </Container>
   );
 }
+

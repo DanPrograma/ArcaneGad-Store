@@ -1,0 +1,40 @@
+/* Panel vítreo del carrito */
+.cart-panel{
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  padding: 12px;
+  color: rgba(255,255,255,.92);
+  overflow: hidden;
+}
+
+/* Bootstrap 5 usa variables CSS para tabla: las forzamos a transparente */
+.table.cart-table{
+  --bs-table-bg: transparent;
+  --bs-table-color: rgba(255,255,255,.92);
+  --bs-table-striped-bg: rgba(255,255,255,.08);
+  --bs-table-hover-bg: rgba(255,255,255,.10);
+}
+
+/* Cabecera y filas con velos translúcidos (por si el navegador ignora vars) */
+.cart-head > tr > th{
+  background: rgba(255,255,255,.08) !important;
+}
+.cart-row > td{
+  background: rgba(255,255,255,.06) !important;
+}
+
+/* Controles de cantidad: contraste alto */
+.btn-qty{
+  min-width: 36px;
+  color: #fff !important;
+  border-color: rgba(255,255,255,.65) !important;
+}
+.btn-qty-display{
+  min-width: 52px;
+  background: rgba(255,255,255,.12) !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,.35) !important;
+  cursor: default !important;
+}
