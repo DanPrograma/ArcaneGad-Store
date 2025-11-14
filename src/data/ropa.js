@@ -1,8 +1,7 @@
-  
-  
-  // src/data/ropa.js
+// src/data/ropa.js
 // Coloca las imágenes en /public/arcane/ con estos nombres.
-const ropa = [
+
+export const ropa = [
   // CAMISAS (hombre)
   { id: 'ch-001', nombre: 'Camisa Casual Hombre', descripcion: 'Algodón popelina, manga larga, fit regular.', precio: 12990, categoria: 'hombre', tipo: 'camisa', img: '/arcane/camisa-hombre-1.jpg', oferta: true },
   { id: 'ch-002', nombre: 'Camisa Oxford Blanca', descripcion: 'Tejido Oxford, cuello button-down, fácil planchado.', precio: 15990, categoria: 'hombre', tipo: 'camisa', img: '/arcane/camisa-hombre-2.jpg' },
@@ -36,5 +35,4 @@ const ropa = [
   { id: 'fm-006', nombre: 'Falda A-Línea Corta', descripcion: 'Corte A, cierre trasero, diaria.', precio: 20990, categoria: 'mujer', tipo: 'falda', img: '/arcane/falda-mujer-6.jpg', oferta: true },
 ];
 
-export { ropa };        // <- named export
-export default ropa;    // <- default export (para que funcione de ambas formas)
+export default ropa; // opcional; dejamos ambos exports para compatibilidad

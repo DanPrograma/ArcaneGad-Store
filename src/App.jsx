@@ -1,43 +1,66 @@
 // src/App.jsx
-// App raíz: rutas, navbar, estado global del carrito con persistencia y checkout.
+// App raíz: rutas, navbar, carrito con persistencia, checkout y admin.
 import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import { AuthProvider } from './auth/AuthContext';
 import AppNavbar from './components/AppNavbar';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 
-// Páginas básicas
+// Páginas cargadas normal
 import Home from './pages/Home';
 import Productos from './pages/Productos';
 import Carrito from './pages/Carrito';
 import Login from './pages/Login';
 import Register from './pages/Register';
-
-// Detalle de producto en lazy (para no romper el arranque si falla)
-const ProductoDetalle = lazy(() => import('./pages/ProductoDetalle'));
-
-// Checkout y resultado
-import Checkout from './pages/Checkout.jsx';
+import Checkout from './pages/Checkout';
 import CompraExitosa from './pages/CompraExitosa';
 import CompraFallida from './pages/CompraFallida';
+import AdminDashboard from './pages/AdminDashboard';
+
+// Carga diferida: si esta página rompe, no tira abajo el arranque
+const ProductoDetalle = lazy(() => import('./pages/ProductoDetalle'));
+
+// Pequeño ErrorBoundary para evitar "pantalla en blanco"
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(error) { return { error }; }
+  componentDidCatch(error, info) { console.error('App error:', error, info); }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ padding: 16 }}>
+          <h2>Se produjo un error</h2>
+          <pre style={{ whiteSpace: 'pre-wrap' }}>{String(this.state.error)}</pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export default function App() {
-  // Título
+  // Título de la pestaña
   useEffect(() => { document.title = 'ArcaneGad'; }, []);
 
-  // Estado del carrito con persistencia en localStorage
+  // ===== Carrito con persistencia =====
   const [carrito, setCarrito] = useState([]);
+
+  // Cargar carrito una vez al montar
   useEffect(() => {
     try {
       const raw = localStorage.getItem('tg_cart');
       if (raw) setCarrito(JSON.parse(raw));
-    } catch {}
+    } catch { /* ignore */ }
   }, []);
+
+  // Guardar cada vez que cambie
   useEffect(() => {
     localStorage.setItem('tg_cart', JSON.stringify(carrito));
   }, [carrito]);
 
-  // Agregar (merge por id + talla)
+  // Agregar al carrito (merge por id + talla)
   const addToCart = (item) =>
     setCarrito(prev => {
       const i = prev.findIndex(x => x.id === item.id && x.talla === item.talla);
@@ -49,7 +72,7 @@ export default function App() {
       return [...prev, { ...item, qty: item.qty || 1 }];
     });
 
-  // Controles cantidad
+  // Sumar/restar/eliminar/limpiar
   const incrementItem = (index) =>
     setCarrito(prev => {
       const copy = [...prev];
@@ -73,56 +96,64 @@ export default function App() {
 
   const clearCart = () => setCarrito([]);
 
+  // ===== Router =====
   return (
     <AuthProvider>
       <Router>
-        <AppNavbar />
-        {/* Suspense: fallback mientras carga ProductoDetalle (lazy) */}
-        <Suspense fallback={<div style={{ padding: 16 }}>Cargando…</div>}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/productos" element={<Productos />} />
-            <Route path="/productos/:id" element={<ProductoDetalle onAdd={addToCart} />} />
+        <ErrorBoundary>
+          <AppNavbar />
+          <Suspense fallback={<div style={{ padding: 16 }}>Cargando…</div>}>
+            <Routes>
+              {/* Públicas */}
+              <Route path="/" element={<Home />} />
+              <Route path="/productos" element={<Productos />} />
+              <Route path="/productos/:id" element={<ProductoDetalle onAdd={addToCart} />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
 
-            {/* Carrito protegido: exige login */}
-            <Route
-              path="/carrito"
-              element={
-                <ProtectedRoute>
-                  <Carrito
-                    items={carrito}
-                    onIncrement={incrementItem}
-                    onDecrement={decrementItem}
-                    onRemove={removeFromCart}
-                    onClear={clearCart}
-                  />
-                </ProtectedRoute>
-              }
-            />
+              {/* Protegidas (requieren login) */}
+              <Route
+                path="/carrito"
+                element={
+                  <ProtectedRoute>
+                    <Carrito
+                      items={carrito}
+                      onIncrement={incrementItem}
+                      onDecrement={decrementItem}
+                      onRemove={removeFromCart}
+                      onClear={clearCart}
+                    />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/checkout"
+                element={
+                  <ProtectedRoute>
+                    <Checkout onSuccess={clearCart} />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Checkout protegido: exige login */}
-            <Route
-              path="/checkout"
-              element={
-                <ProtectedRoute>
-                  {/* Pasamos clearCart para vaciar al finalizar */}
-                  <Checkout onSuccess={clearCart} />
-                </ProtectedRoute>
-              }
-            />
+              {/* Resultados de compra */}
+              <Route path="/compra-exitosa" element={<CompraExitosa />} />
+              <Route path="/compra-fallida" element={<CompraFallida />} />
 
-            {/* Resultados del pago */}
-            <Route path="/compra-exitosa" element={<CompraExitosa />} />
-            <Route path="/compra-fallida" element={<CompraFallida />} />
+              {/* Admin (requiere role admin) */}
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
+                }
+              />
 
-            {/* Auth */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-
-            {/* Catch-all */}
-            <Route path="*" element={<Home />} />
-          </Routes>
-        </Suspense>
+              {/* Catch-all */}
+              <Route path="*" element={<Home />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </Router>
     </AuthProvider>
   );

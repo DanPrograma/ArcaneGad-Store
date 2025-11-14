@@ -1,40 +1,40 @@
 // src/pages/ProductoDetalle.jsx
-import React from 'react';
-import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
+import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
+import { getCatalog } from '../utils/catalog';
 import { useAuth } from '../auth/AuthContext';
-import { ropa } from '../data/ropa';
+
+const TALLAS = ['S', 'M', 'L', 'XL', 'XXL'];
 
 export default function ProductoDetalle({ onAdd }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const producto = useMemo(() => getCatalog().find(p => p.id === id), [id]);
 
-  // normalizamos por si viene codificado o con tipos distintos
-  const safeId = decodeURIComponent(String(id));
-  const prod = ropa.find(p => String(p.id) === safeId);
+  const [talla, setTalla] = useState(null);
 
-  const [talla, setTalla] = React.useState('');
-  const tallas = ['S', 'M', 'L', 'XL', 'XXL'];
-
-  if (!prod) {
+  if (!producto) {
     return (
-      <Container className="py-5">
-        <h3>Producto no encontrado</h3>
-        <Button variant="outline-secondary" className="mt-2" onClick={() => navigate('/productos')}>
-          Volver a Ropa
-        </Button>
+      <Container className="py-4">
+        <h2>Producto no encontrado</h2>
+        <Button variant="outline-light" onClick={() => navigate('/productos')}>Volver</Button>
       </Container>
     );
   }
 
   const handleAdd = () => {
     if (!talla) return;
-    if (!user) {
-      navigate('/register', { replace: true, state: { from: '/carrito' } });
-      return;
-    }
-    onAdd?.({ ...prod, talla, qty: 1 });
+    if (!user) { navigate('/register'); return; }
+    onAdd?.({
+      id: producto.id,
+      nombre: producto.nombre,
+      precio: producto.precio,
+      img: producto.img,
+      talla,
+      qty: 1,
+    });
     navigate('/carrito');
   };
 
@@ -42,42 +42,41 @@ export default function ProductoDetalle({ onAdd }) {
     <Container className="py-4">
       <Row className="g-4">
         <Col md={6}>
-          <Card className="arcane">
-            <Card.Img src={prod.img} alt={prod.nombre} />
+          <Card className="h-100 arcane">
+            <Card.Img src={producto.img} alt={producto.nombre} />
           </Card>
         </Col>
+
         <Col md={6}>
-          <h2 className="mb-1">{prod.nombre}</h2>
-          {prod.oferta && <Badge bg="secondary" className="mb-2">Oferta</Badge>}
-          <p className="mb-2" style={{ opacity: .9 }}>{prod.descripcion}</p>
-          <p className="fw-bold fs-5 mb-3">${prod.precio.toLocaleString('es-CL')}</p>
+          <h2 className="mb-2">{producto.nombre}</h2>
+          <p className="mb-2" style={{opacity:.9}}>{producto.descripcion}</p>
+          <p className="mb-3"><Badge bg="secondary" className="me-2 text-uppercase">{producto.categoria}</Badge><Badge bg="dark" className="text-uppercase">{producto.tipo}</Badge></p>
+          <h4 className="mb-4">${producto.precio.toLocaleString('es-CL')}</h4>
 
           <div className="mb-3">
             <div className="mb-2 fw-semibold">Talla</div>
-            <div className="d-flex flex-wrap gap-2">
-              {tallas.map(t => (
+            <div className="d-flex gap-2 flex-wrap" role="group" aria-label="selector de talla">
+              {TALLAS.map(t => (
                 <Button
                   key={t}
-                  variant={talla === t ? 'primary' : 'outline-light'}
+                  variant={talla === t ? 'light' : 'outline-light'}
                   onClick={() => setTalla(t)}
-                  style={{ minWidth: 60 }}
                 >
                   {t}
                 </Button>
               ))}
             </div>
-            {!talla && <div className="mt-2 text-warning" style={{ opacity: .8 }}>Selecciona una talla para continuar.</div>}
           </div>
 
-          <div className="d-flex gap-2">
-            <Button variant="outline-secondary" onClick={() => navigate(-1)}>Volver</Button>
-            <Button variant="success" disabled={!talla} onClick={handleAdd}>
-              Agregar al carrito
-            </Button>
-          </div>
+          <Button
+            variant="primary"
+            onClick={handleAdd}
+            disabled={!talla}                 // <- DESHABILITADO sin talla
+          >
+            Agregar al carrito
+          </Button>
         </Col>
       </Row>
     </Container>
   );
 }
-

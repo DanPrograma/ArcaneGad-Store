@@ -1,64 +1,99 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+// src/auth/AuthContext.jsx
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
+const AuthCtx = createContext(null);
+export const useAuth = () => useContext(AuthCtx);
 
-const AuthContext = createContext(null)
-export const useAuth = () => useContext(AuthContext)
+const LS_USER  = 'tg_user';
+const LS_USERS = 'tg_users';
 
-
-const USERS_KEY = 'tg_users' // lista de usuarios registrados
-const SESSION_KEY = 'tg_session' // usuario logueado actual
-
+// Admin “semilla”: puedes cambiar clave aquí
+const ADMIN = {
+  username: 'admin',
+  email: 'admin@arcanegad.cl',
+  password: 'Admin123',
+  nombre: 'Admin',
+  role: 'admin',
+};
 
 export function AuthProvider({ children }) {
-    const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    const raw = localStorage.getItem(LS_USER);
+    if (raw) setUser(JSON.parse(raw));
+  }, []);
 
-    // Cargar sesión persistida
-    useEffect(() => {
-        const raw = localStorage.getItem(SESSION_KEY)
-        if (raw) { setUser(JSON.parse(raw)) }
-    }, [])
+  const saveUser = (u) => {
+    setUser(u);
+    localStorage.setItem(LS_USER, JSON.stringify(u));
+  };
 
+  // identifier = username o correo
+  const login = async ({ identifier, password }) => {
+    const id = identifier?.toLowerCase();
 
-    const getUsers = () => {
-        const raw = localStorage.getItem(USERS_KEY)
-        return raw ? JSON.parse(raw) : []
+    // Admin por usuario O por correo
+    if (
+      (id === ADMIN.username || id === ADMIN.email) &&
+      password === ADMIN.password
+    ) {
+      const adminUser = {
+        username: ADMIN.username,
+        email: ADMIN.email,
+        nombre: ADMIN.nombre,
+        role: 'admin',
+      };
+      saveUser(adminUser);
+      return { ok: true, user: adminUser };
     }
 
+    // Usuarios registrados (pueden NO tener email)
+    const users = JSON.parse(localStorage.getItem(LS_USERS) || '[]');
+    const found = users.find(
+      (u) =>
+        (u.username?.toLowerCase() === id ||
+          u.email?.toLowerCase?.() === id) &&
+        u.password === password
+    );
 
-    const saveUsers = (list) => {
-        localStorage.setItem(USERS_KEY, JSON.stringify(list))
+    if (found) {
+      const u = { ...found, password: undefined, role: found.role || 'user' };
+      saveUser(u);
+      return { ok: true, user: u };
     }
+    return { ok: false, error: 'Credenciales inválidas' };
+  };
 
-
-    const register = ({ nombre, apellido, username, password }) => {
-        const users = getUsers()
-        const exists = users.some(u => u.username.toLowerCase() === username.toLowerCase())
-        if (exists) { throw new Error('El nombre de usuario ya está en uso.') }
-        const newUser = { id: crypto.randomUUID(), nombre, apellido, username, password }
-        users.push(newUser)
-        saveUsers(users)
-        return { id: newUser.id, nombre, apellido, username }
+  // email es opcional; seguimos permitiendo registro sin correo
+  const register = async ({ nombre, apellido, username, password, email }) => {
+    const users = JSON.parse(localStorage.getItem(LS_USERS) || '[]');
+    if (users.some((u) => u.username?.toLowerCase() === username?.toLowerCase())) {
+      return { ok: false, error: 'Ese usuario ya existe' };
     }
+    const newUser = {
+      nombre,
+      apellido,
+      username,
+      password,
+      email: email || null,
+      role: 'user',
+    };
+    users.push(newUser);
+    localStorage.setItem(LS_USERS, JSON.stringify(users));
+    const u = { ...newUser, password: undefined };
+    saveUser(u);
+    return { ok: true, user: u };
+  };
 
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem(LS_USER);
+  };
 
-    const login = ({ username, password }) => {
-        const users = getUsers()
-        const match = users.find(u => u.username === username && u.password === password)
-        if (!match) { throw new Error('Usuario o contraseña inválidos.') }
-        const sessionUser = { id: match.id, nombre: match.nombre, apellido: match.apellido, username: match.username }
-        setUser(sessionUser)
-        localStorage.setItem(SESSION_KEY, JSON.stringify(sessionUser))
-        return sessionUser
-    }
-
-
-    const logout = () => {
-        setUser(null)
-        localStorage.removeItem(SESSION_KEY)
-    }
-
-
-    const value = { user, register, login, logout }
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    <AuthCtx.Provider value={{ user, login, register, logout }}>
+      {children}
+    </AuthCtx.Provider>
+  );
 }

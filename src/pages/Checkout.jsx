@@ -1,6 +1,6 @@
 // src/pages/Checkout.jsx
 // Pide Dirección, Ciudad, País y Teléfono. Genera "boleta" y limpia carrito.
-// FIX: usamos `loaded` para no redirigir antes de cargar el carrito desde localStorage.
+// FIX: `loaded` para no redirigir antes de cargar el carrito desde localStorage.
 import React from 'react';
 import { Container, Row, Col, Card, Form, Button, Table } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +26,7 @@ export default function Checkout({ onSuccess }) {
     }
   }, []);
 
-  // Si (y solo si) ya cargamos y no hay ítems, volvemos al carrito
+  // Si (y solo si) ya cargamos y no hay ítems, se vuelve al carrito
   React.useEffect(() => {
     if (loaded && items.length === 0) {
       navigate('/carrito', { replace: true });

@@ -1,59 +1,48 @@
-import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { Form, Button, Card, Alert, Container, Row, Col } from 'react-bootstrap'
-import { useAuth } from '../auth/AuthContext'
+// src/pages/Login.jsx
+import React, { useState } from 'react';
+import { Container, Form, Button, Alert } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
 
 export default function Login() {
-    const { login } = useAuth()
-    const navigate = useNavigate()
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-    const [error, setError] = useState('')
-    const [loading, setLoading] = useState(false)
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [identifier, setIdentifier] = useState(''); // usuario o correo
+  const [password, setPassword] = useState('');
+  const [err, setErr] = useState(null);
 
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const res = await login({ identifier, password });
+    if (res.ok) navigate('/');
+    else setErr(res.error || 'Error de autenticación');
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        setError('')
-        setLoading(true)
-        try {
-            await login({ username, password })
-            navigate('/')
-        } catch (err) {
-            setError(err.message)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-
-    return (
-        <Container>
-            <Row className="justify-content-center">
-                <Col md={6} lg={5}>
-                    <Card className="p-3">
-                        <Card.Body>
-                            <Card.Title className="mb-3">Iniciar sesión</Card.Title>
-                            {error && <Alert variant="danger">{error}</Alert>}
-                            <Form onSubmit={handleSubmit}>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Usuario</Form.Label>
-                                    <Form.Control value={username} onChange={e => setUsername(e.target.value)} placeholder="tu_usuario" required />
-                                </Form.Group>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Contraseña</Form.Label>
-                                    <Form.Control type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
-                                </Form.Group>
-                                <div className="d-grid gap-2">
-                                    <Button type="submit" disabled={loading}>{loading ? 'Ingresando…' : 'Ingresar'}</Button>
-                                </div>
-                            </Form>
-                            <hr />
-                            <p className="mb-0">¿No tienes cuenta? <Link to="/register">Regístrate</Link></p>
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
-        </Container>
-    )
+  return (
+    <Container className="py-4" style={{ maxWidth: 480 }}>
+      <h2>Iniciar sesión</h2>
+      {err && <Alert variant="danger" className="mt-3">{err}</Alert>}
+      <Form onSubmit={onSubmit} className="mt-3">
+        <Form.Group className="mb-3" controlId="login-id">
+          <Form.Label>Usuario o correo</Form.Label>
+          <Form.Control
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            required
+            placeholder="nomre de usuario o su correo terminado en '@arcanegad.cl'"
+          />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="login-pass">
+          <Form.Label>Contraseña</Form.Label>
+          <Form.Control
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </Form.Group>
+        <Button type="submit">Entrar</Button>
+      </Form>
+    </Container>
+  );
 }
